@@ -5,9 +5,12 @@
  */
 package Model;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,17 +20,22 @@ import java.util.logging.Logger;
  */
 public class ConnectionBuilder {
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException, IOException {
         Connection con = null;
 
-        String user = "root";
-        String password = "root";
-        String url = "jdbc:mysql://localhost:3306/pusher?zeroDateTimeBehavior=convertToNull";
-        String dbClass = "com.mysql.jdbc.Driver";
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        
+            Properties prop = new Properties();
+            InputStream input = classloader.getResourceAsStream("database.properties");
+            prop.load(input);
+            String USER = prop.getProperty("user");
+            String PASS = prop.getProperty("pass");
+            String PORT = prop.getProperty("port");
+            String dbClass = "com.mysql.jdbc.Driver";
 
         try {
             Class.forName(dbClass);
-            con = DriverManager.getConnection(url, user, password);
+            con = DriverManager.getConnection("jdbc:mysql://localhost:"+PORT+"/mysql?zeroDateTimeBehavior=convertToNull", USER, PASS);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ConnectionBuilder.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -35,7 +43,7 @@ public class ConnectionBuilder {
         return con;
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
         Connection con = ConnectionBuilder.getConnection();
 
         System.out.println(con);
