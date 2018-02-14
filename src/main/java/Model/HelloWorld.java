@@ -21,7 +21,7 @@ public class HelloWorld {
 
     public String getData() throws ClassNotFoundException, SQLException {
         Connection con = ConnectionBuilder.getConnection();
-        java.sql.PreparedStatement pstm = con.prepareStatement("select data from hellodb where dataID = 3");
+        java.sql.PreparedStatement pstm = con.prepareStatement("select data from hellodb where dataID = 1");
         ResultSet rs = pstm.executeQuery();
         while (rs.next()) {
             hello = new HelloWorld();
